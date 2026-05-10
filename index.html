@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Toán 10 – Cuối HK2 2025-2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+    onload="document.addEventListener('DOMContentLoaded', () => renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]}))"></script>
+  <style>
+    :root {
+      --bg: #0a0e17; --surface: #111827; --surface2: #151f30; --border: #1f2d45;
+      --accent: #4f8ef7; --accent2: #7ab3ff; --gold: #4f8ef7; --gold2: #7ab3ff;
+      --red: #f85149; --green: #3fb950; --text: #e2e8f0; --muted: #94a3b8; --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(79,142,247,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.03) 1px,transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+    .glow { position: fixed; width: 500px; height: 500px; background: radial-gradient(circle, rgba(79,142,247,0.1) 0%, rgba(79,142,247,0.03) 40%, transparent 70%); border-radius: 50%; z-index: 0; pointer-events: none; transform: translate(-50%,-50%); left: 50%; top: 50%; transition: left 0.08s ease, top 0.08s ease; }
+    .screen { display: none; width: 100%; max-width: 920px; padding: 24px 16px 60px; position: relative; z-index: 1; }
+    .screen.active { display: block; }
+    #start-screen { text-align: center; padding-top: 60px; }
+    .logo-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(79,142,247,0.1); border: 1px solid rgba(79,142,247,0.4); border-radius: 999px; padding: 6px 16px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: var(--accent2); text-transform: uppercase; margin-bottom: 28px; animation: fadeDown 0.8s ease both; }
+    h1.main-title { font-family: 'Libre Baskerville', serif; font-size: clamp(2rem,5vw,3.4rem); font-weight: 900; line-height: 1.15; background: linear-gradient(135deg,#fff 0%,var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; animation: fadeDown 0.9s 0.1s ease both; }
+    .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 36px; animation: fadeDown 1s 0.2s ease both; }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .stats-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 22px; text-align: center; min-width: 110px; transition: border-color 0.3s; }
+    .stat-card:hover { border-color: rgba(79,142,247,0.4); }
+    .stat-card .num { font-family: 'Libre Baskerville', serif; font-size: 1.9rem; font-weight: 700; color: var(--accent); }
+    .stat-card .lbl { font-size: 0.73rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .mode-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 12px; margin-bottom: 40px; }
+    .mode-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: left; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+    .mode-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg,var(--accent),var(--accent2)); opacity: 0; transition: opacity 0.2s; }
+    .mode-card:hover, .mode-card.selected { border-color: rgba(79,142,247,0.5); background: rgba(79,142,247,0.07); }
+    .mode-card:hover::before, .mode-card.selected::before { opacity: 1; }
+    .mode-card.selected { box-shadow: 0 0 0 1px rgba(79,142,247,0.4); }
+    .mode-card .mode-num { font-size: 0.68rem; color: var(--accent2); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .mode-card .mode-name { font-size: 0.87rem; font-weight: 600; margin-top: 4px; line-height: 1.3; }
+    .mode-card .mode-count { font-size: 0.73rem; color: var(--muted); margin-top: 6px; }
+    .btn-start { background: linear-gradient(135deg,#4f8ef7,#7ab3ff); color: #0a0e17; border: none; border-radius: var(--radius); padding: 16px 48px; font-size: 1.05rem; font-weight: 700; font-family: 'DM Sans',sans-serif; cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em; animation: fadeDown 1s 0.3s ease both; }
+    .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,142,247,0.4); }
+    #quiz-screen { padding-top: 20px; }
+    .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; flex-wrap: wrap; }
+    .mode-badge { background: rgba(79,142,247,0.12); border: 1px solid rgba(79,142,247,0.3); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 700; color: var(--accent2); letter-spacing: 0.08em; text-transform: uppercase; }
+    .q-counter { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    .q-counter span { color: var(--text); font-weight: 700; }
+    .progress-bar-wrap { width: 100%; height: 5px; background: var(--border); border-radius: 999px; margin-bottom: 24px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg,#4f8ef7,#7ab3ff); border-radius: 999px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .segment-progress { display: flex; gap: 3px; margin-bottom: 20px; flex-wrap: wrap; }
+    .seg-dot { flex: 1; min-width: 3px; max-width: 10px; height: 5px; border-radius: 999px; background: var(--border); transition: background 0.3s; }
+    .seg-dot.correct { background: var(--green); }
+    .seg-dot.wrong { background: var(--red); }
+    .seg-dot.current { background: var(--accent); }
+    .quiz-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; align-items: start; }
+    .quiz-layout.no-passage { grid-template-columns: 1fr; }
+    .passage-panel { background: var(--surface2); border: 1px solid var(--border); border-radius: 18px; padding: 20px; max-height: 520px; overflow-y: auto; font-size: 0.87rem; line-height: 1.75; color: #cbd5e1; position: sticky; top: 16px; }
+    .passage-panel::-webkit-scrollbar { width: 5px; }
+    .passage-panel::-webkit-scrollbar-track { background: transparent; }
+    .passage-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+    .passage-panel h4 { font-size: 0.75rem; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .passage-panel h4::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .passage-panel p { margin-bottom: 10px; }
+    .passage-panel img { max-width: 100%; border-radius: 8px; margin: 8px 0; }
+    .question-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 26px; animation: slideIn 0.3s cubic-bezier(0.4,0,0.2,1); }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .q-label { font-size: 0.7rem; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .q-text { font-size: 1rem; font-weight: 600; line-height: 1.65; margin-bottom: 18px; }
+    .options { display: flex; flex-direction: column; gap: 9px; }
+    .option-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 13px 16px; text-align: left; cursor: pointer; transition: all 0.18s; font-size: 0.9rem; font-family: 'DM Sans',sans-serif; color: var(--text); font-weight: 500; line-height: 1.5; display: flex; align-items: flex-start; gap: 11px; }
+    .option-btn:hover:not(:disabled) { border-color: rgba(79,142,247,0.5); background: rgba(79,142,247,0.08); transform: translateX(3px); }
+    .option-btn .opt-label { width: 24px; height: 24px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.73rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; transition: all 0.18s; }
+    .option-btn:hover:not(:disabled) .opt-label { background: var(--accent); color: #0a0e17; }
+    .option-btn.correct { border-color: var(--green); background: rgba(63,185,80,0.1); pointer-events: none; }
+    .option-btn.correct .opt-label { background: var(--green); color: #0a0e17; }
+    .option-btn.wrong { border-color: var(--red); background: rgba(248,81,73,0.1); pointer-events: none; }
+    .option-btn.wrong .opt-label { background: var(--red); color: #fff; }
+    .option-btn.disabled-plain { opacity: 0.5; pointer-events: none; }
+    .tf-options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tf-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 28px; cursor: pointer; transition: all 0.18s; font-size: 0.9rem; font-family: 'DM Sans',sans-serif; color: var(--text); font-weight: 600; }
+    .tf-btn:hover:not(:disabled) { border-color: rgba(79,142,247,0.5); background: rgba(79,142,247,0.08); }
+    .tf-btn.correct { border-color: var(--green); background: rgba(63,185,80,0.1); color: #7ee787; pointer-events: none; }
+    .tf-btn.wrong { border-color: var(--red); background: rgba(248,81,73,0.1); color: #ff7b72; pointer-events: none; }
+    .tf-sub-item { margin-bottom: 14px; }
+    .tf-sub-label { font-size: 0.87rem; font-weight: 600; margin-bottom: 8px; line-height: 1.55; color: var(--text); }
+    .tf-sub-label span { color: var(--accent2); font-weight: 700; }
+    .wc-feedback { font-size: 0.82rem; margin-top: 6px; padding: 8px 12px; border-radius: 8px; display: none; line-height: 1.5; }
+    .wc-feedback.show { display: block; }
+    .wc-feedback.wf-correct { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: #7ee787; }
+    .wc-feedback.wf-wrong { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); color: #ff7b72; }
+    .feedback-box { border-radius: var(--radius); padding: 13px 17px; font-size: 0.87rem; font-weight: 600; margin-bottom: 14px; display: none; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .feedback-box.show { display: flex; }
+    .feedback-box.correct-fb { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: #7ee787; }
+    .feedback-box.wrong-fb { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); color: #ff7b72; }
+    .feedback-explanation { margin-top: 6px; font-size: 0.82rem; font-weight: 400; opacity: 0.9; line-height: 1.6; }
+    .btn-next { background: linear-gradient(135deg,#4f8ef7,#7ab3ff); color: #0a0e17; border: none; border-radius: var(--radius); padding: 14px 36px; font-size: 0.95rem; font-weight: 700; font-family: 'DM Sans',sans-serif; cursor: pointer; transition: all 0.2s; display: none; width: 100%; }
+    .btn-next.show { display: block; }
+    .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,142,247,0.35); }
+    #result-screen { text-align: center; padding-top: 40px; }
+    .result-ring-wrap { display: flex; justify-content: center; margin-bottom: 26px; }
+    .result-ring { width: 160px; height: 160px; position: relative; }
+    .result-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: var(--border); stroke-width: 10; }
+    .ring-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1); }
+    .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-pct { font-family: 'Libre Baskerville', serif; font-size: 2.2rem; font-weight: 900; }
+    .ring-lbl { font-size: 0.7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+    .result-title { font-family: 'Libre Baskerville', serif; font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+    .result-sub { color: var(--muted); margin-bottom: 30px; }
+    .result-stats { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+    .res-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 13px 18px; min-width: 95px; }
+    .res-stat .rs-num { font-family: 'Libre Baskerville', serif; font-size: 1.8rem; font-weight: 700; }
+    .res-stat .rs-lbl { font-size: 0.7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+    .res-stat.green .rs-num { color: var(--green); }
+    .res-stat.red .rs-num { color: var(--red); }
+    .res-stat.blue .rs-num { color: var(--accent); }
+    .result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-restart, .btn-back { border-radius: var(--radius); padding: 13px 26px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'DM Sans',sans-serif; transition: all 0.2s; border: none; }
+    .btn-restart { background: linear-gradient(135deg,#4f8ef7,#7ab3ff); color: #0a0e17; }
+    .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,142,247,0.35); }
+    .btn-back { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-back:hover { border-color: var(--accent); color: var(--accent2); }
+    .review-section { margin-top: 36px; text-align: left; }
+    .review-title { font-family: 'Libre Baskerville', serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 14px; color: var(--accent2); }
+    .review-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; margin-bottom: 10px; }
+    .review-item .ri-q { font-size: 0.87rem; font-weight: 600; margin-bottom: 8px; line-height: 1.5; }
+    .review-item .ri-row { font-size: 0.8rem; margin-top: 4px; line-height: 1.5; }
+    .ri-wrong-ans { color: var(--red); }
+    .ri-right-ans { color: var(--green); }
+    @media (max-width: 700px) {
+      .quiz-layout { display: flex; flex-direction: column; gap: 10px; }
+      .passage-panel { position: static; max-height: 260px; overflow-y: auto; padding: 14px 16px; }
+      .question-card { padding: 18px 14px; }
+      .q-text { font-size: 0.93rem; }
+      .option-btn { font-size: 0.85rem; padding: 11px 13px; }
+      .screen { padding: 16px 12px 60px; }
+    }
+    /* Short Answer */
+    .sa-wrap { display: flex; flex-direction: column; gap: 14px; }
+    .sa-input-row { display: flex; align-items: center; gap: 10px; }
+    .sa-input { background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; padding: 11px 16px; width: 100%; max-width: 280px; transition: border-color 0.18s; outline: none; }
+    .sa-input:focus { border-color: var(--accent); }
+    .sa-input.sa-correct { border-color: var(--green); background: rgba(63,185,80,0.1); color: #7ee787; }
+    .sa-input.sa-wrong { border-color: var(--red); background: rgba(248,81,73,0.1); color: #ff7b72; }
+    .sa-unit { font-size: 0.85rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .sa-hint { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+    .btn-check-sa { background: rgba(79,142,247,0.15); border: 1px solid rgba(79,142,247,0.4); border-radius: var(--radius); padding: 12px 28px; font-size: 0.9rem; font-weight: 700; font-family: 'DM Sans', sans-serif; color: var(--accent2); cursor: pointer; transition: all 0.2s; margin-top: 4px; }
+    .btn-check-sa:hover { background: rgba(79,142,247,0.25); }
+    .sa-correct-show { margin-top: 8px; font-size: 0.82rem; color: var(--green); font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="glow" id="glow"></div>
+
+<!-- START SCREEN -->
+<div class="screen active" id="start-screen">
+  <div class="logo-badge">📐 Toán 10 – THPT Nguyễn Tất Thành</div>
+  <h1 class="main-title">Quiz Toán 10</h1>
+  <p class="subtitle">Ôn tập Cuối Học Kì II – 2025/2026</p>
+  <div class="stats-row">
+    <div class="stat-card"><div class="num" id="total-q-badge">—</div><div class="lbl">Câu hỏi</div></div>
+    <div class="stat-card"><div class="num">3</div><div class="lbl">Phần</div></div>
+    <div class="stat-card"><div class="num">∞</div><div class="lbl">Thời gian</div></div>
+  </div>
+  <div class="mode-list" id="mode-list">
+    <div class="mode-card selected" data-mode="all">
+      <div class="mode-num">Tổng hợp</div>
+      <div class="mode-name">Tất cả câu hỏi</div>
+      <div class="mode-count" id="cnt-all">—</div>
+    </div>
+    <div class="mode-card" data-mode="tnmc">
+      <div class="mode-num">Phần I</div>
+      <div class="mode-name">Trắc nghiệm 4 phương án</div>
+      <div class="mode-count" id="cnt-tnmc">— câu</div>
+    </div>
+    <div class="mode-card" data-mode="ds">
+      <div class="mode-num">Phần II</div>
+      <div class="mode-name">Đúng / Sai</div>
+      <div class="mode-count" id="cnt-ds">— câu</div>
+    </div>
+    <div class="mode-card" data-mode="sn">
+      <div class="mode-num">Phần III</div>
+      <div class="mode-name">Trả lời ngắn</div>
+      <div class="mode-count" id="cnt-sn">— câu</div>
+    </div>
+  </div>
+  <button class="btn-start" id="btn-start">🚀 Bắt đầu làm bài</button>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="screen" id="quiz-screen">
+  <div class="quiz-header">
+    <div class="mode-badge" id="cur-mode-badge">Tổng hợp</div>
+    <div class="q-counter">Câu <span id="q-cur">1</span> / <span id="q-total">—</span></div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
+  <div class="segment-progress" id="seg-progress"></div>
+  <div class="quiz-layout no-passage" id="quiz-layout">
+    <div class="passage-panel" id="passage-panel" style="display:none">
+      <div id="passage-text"></div>
+    </div>
+    <div class="question-card">
+      <div class="q-label" id="q-label">Câu 1</div>
+      <div class="q-text" id="q-text"></div>
+      <div id="q-content"></div>
+      <div class="feedback-box" id="feedback-box"></div>
+      <button class="btn-next" id="btn-next">Câu tiếp theo →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="screen" id="result-screen">
+  <div class="result-ring-wrap">
+    <div class="result-ring">
+      <svg viewBox="0 0 150 150">
+        <circle class="ring-bg" cx="75" cy="75" r="65"/>
+        <circle class="ring-fill" id="ring-fill" cx="75" cy="75" r="65"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-pct" id="ring-pct">0%</div>
+        <div class="ring-lbl">Điểm</div>
+      </div>
+    </div>
+  </div>
+  <div class="result-title" id="result-title">Hoàn thành!</div>
+  <div class="result-sub" id="result-sub"></div>
+  <div class="result-stats">
+    <div class="res-stat green"><div class="rs-num" id="rs-correct">0</div><div class="rs-lbl">Đúng</div></div>
+    <div class="res-stat red"><div class="rs-num" id="rs-wrong">0</div><div class="rs-lbl">Sai</div></div>
+    <div class="res-stat blue"><div class="rs-num" id="rs-total">0</div><div class="rs-lbl">Tổng</div></div>
+  </div>
+  <div class="result-btns">
+    <button class="btn-restart" onclick="startQuiz()">🔄 Làm lại</button>
+    <button class="btn-back" onclick="showScreen('start-screen')">← Trang chủ</button>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Xem lại câu sai</div>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script>
+const IMGS = {};
+
+// ── QUESTION DATA ──
+const questionsData = {
+  tnmc: [
+    {id:'p1q1',label:'Câu 1',question:'Số cách sắp xếp vị trí của 4 bạn thành một hàng dọc là',options:['12','24','20','36'],correct:1,explanation:'4! = 24'},
+    {id:'p1q2',label:'Câu 2',question:'Số cách sắp xếp vị trí của 4 bạn từ trong nhóm gồm 6 bạn thành một hàng ngang là',options:['120','240','360','720'],correct:2,explanation:'A(6,4) = 6·5·4·3 = 360'},
+    {id:'p1q3',label:'Câu 3',question:'Một hộp có 3 viên bi đỏ và 4 viên bi xanh. Số cách lấy ra hai viên bi, trong đó có 1 viên bi đỏ và 1 viên bi xanh bằng',options:['81','7','12','64'],correct:2,explanation:'3·4 = 12'},
+    {id:'p1q4',label:'Câu 4',question:'Số các chỉnh hợp chập 3 của 5 phần tử là',options:['$C_5^3$','$C_3^5$','$A_5^3$','$P_5 - P_3$'],correct:2,explanation:'A(5,3) là chỉnh hợp chập 3 của 5'},
+    {id:'p1q5',label:'Câu 5',question:'Tung một đồng xu hai lần liên tiếp. Số phần tử của biến cố "Mặt ngửa xuất hiện đúng 1 lần" là',options:['2','4','5','6'],correct:0,explanation:'Các kết quả: {NT, TN}'},
+    {id:'p1q6',label:'Câu 6',question:'Gieo một con súc sắc cân đối và đồng chất. Xác suất của biến cố: "Mặt có số chấm chẵn xuất hiện" là',options:['1','$\\frac{1}{2}$','$\\frac{1}{3}$','$\\frac{2}{3}$'],correct:1,explanation:'3/6 = 1/2'},
+    {id:'p1q7',label:'Câu 7',question:'Một tổ học sinh có 4 nam và 6 nữ. Chọn ngẫu nhiên 2 người. Tính xác suất sao cho 2 người được chọn đều là nam.',options:['$\\frac{4}{15}$','$\\frac{2}{15}$','$\\frac{3}{5}$','$\\frac{7}{10}$'],correct:1,explanation:'C(4,2)/C(10,2) = 6/45 = 2/15'},
+    {id:'p1q8',label:'Câu 8',question:'Một túi chứa 6 viên bi xanh, 4 viên bi đỏ. Lấy ngẫu nhiên 2 viên bi. Tính xác suất để lấy được cả hai bi đều màu đỏ?',options:['$\\frac{4}{15}$','$\\frac{2}{15}$','$\\frac{8}{15}$','$\\frac{7}{45}$'],correct:1,explanation:'C(4,2)/C(10,2) = 6/45 = 2/15'},
+    {id:'p1q9',label:'Câu 9',question:'Tọa độ của vectơ $\\vec{u} = 3\\vec{i} - \\vec{j}$ là',options:['$\\vec{u} = (1; -3)$','$\\vec{u} = (-3; 1)$','$\\vec{u} = (0; -3)$','$\\vec{u} = (1; 0)$'],correct:0,explanation:'(Xem lại đáp án từ giáo viên)'},
+    {id:'p1q10',label:'Câu 10',question:'Cho vectơ $\\overrightarrow{OM} = 2\\vec{i} - 3\\vec{j}$. Khi đó tọa độ của điểm M là',options:['$M(2; -3)$','$M(-3; 2)$','$M(2; 0)$','$M(0; -3)$'],correct:0,explanation:'M(2;-3)'},
+    {id:'p1q11',label:'Câu 11',question:'Tọa độ trung điểm M của đoạn thẳng AB, với $A(0;3), B(2;1)$ là',options:['$M(2; -2)$','$M(2; 4)$','$M(-2; 2)$','$M(1; 2)$'],correct:3,explanation:'M = ((0+2)/2; (3+1)/2) = (1;2)'},
+    {id:'p1q12',label:'Câu 12',question:'Tọa độ trọng tâm G của tam giác ABC, với $A(-1; 2), B(3; 3), C(1; 1)$ là',options:['$G(1; 0)$','$G(1; 2)$','$G(3; 6)$','$G(2; 1)$'],correct:1,explanation:'G = ((-1+3+1)/3; (2+3+1)/3) = (1;2)'},
+    {id:'p1q13',label:'Câu 13',question:'Đường thẳng $\\Delta: \\begin{cases} x = -1 + 2t \\\\ y = t \\end{cases}$ có vectơ chỉ phương là',options:['$\\vec{u} = (-1; 0)$','$\\vec{u} = (-2; 1)$','$\\vec{u} = (1; 2)$','$\\vec{u} = (2; 1)$'],correct:3,explanation:'VTCP = (2;1)'},
+    {id:'p1q14',label:'Câu 14',question:'Điểm nào sau đây thuộc đường thẳng $\\Delta: \\frac{x-1}{2} = \\frac{y}{-1}$',options:['$M(0; 1)$','$N(2; -1)$','$P(1; 0)$','$Q(-1; 2)$'],correct:2,explanation:'P(1;0): (1-1)/2 = 0/(-1) = 0'},
+    {id:'p1q15',label:'Câu 15',question:'Đường thẳng $\\Delta$ đi qua 2 điểm $A(-2; 0), B(0; 4)$ có vectơ pháp tuyến là',options:['$\\vec{n} = (-2; 4)$','$\\vec{n} = (1; -2)$','$\\vec{n} = (-2; 1)$','$\\vec{n} = (4; 2)$'],correct:2,explanation:'AB=(2;4), n·AB=0 → n=(-2;1)'},
+    {id:'p1q16',label:'Câu 16',question:'Đường thẳng $d: x - 2y + 3 = 0$ có vectơ pháp tuyến là',options:['$\\vec{n} = (1; -2)$','$\\vec{n} = (2; -1)$','$\\vec{n} = (-2; 3)$','$\\vec{n} = (1; 3)$'],correct:0,explanation:'VTPT đọc từ hệ số (1;-2)'},
+    {id:'p1q17',label:'Câu 17',question:'Đường thẳng $d: \\frac{x}{1} + \\frac{y}{2} = 3$ có vectơ chỉ phương là',options:['$\\vec{u} = (3; 2)$','$\\vec{u} = (3; -2)$','$\\vec{u} = (2; 3)$','$\\vec{u} = (-2; 3)$'],correct:0,explanation:'(Xem lại đáp án từ giáo viên)'},
+    {id:'p1q18',label:'Câu 18',question:'Đường thẳng $\\Delta$ đi qua điểm $A(-1; 5)$ và có hệ số góc $k = -2$ có phương trình tham số là',options:['$\\begin{cases} x = -1 \\\\ y = 5 - 2t \\end{cases}$','$\\begin{cases} x = -1 + t \\\\ y = 5 - 2t \\end{cases}$','$\\begin{cases} x = -1 - 2t \\\\ y = 5 \\end{cases}$','$\\begin{cases} x = -1 + t \\\\ y = 5 + 2t \\end{cases}$'],correct:1,explanation:'Qua A(-1;5), k=-2 → VTCP (1;-2)'},
+    {id:'p1q19',label:'Câu 19',question:'Đường thẳng $\\Delta$ đi qua điểm $M(-3; -2)$ và vuông góc với trục Oy có phương trình tổng quát là',options:['$y + 2 = 0$','$y - 2 = 0$','$x + 2 = 0$','$x - 2 = 0$'],correct:0,explanation:'Δ ⟂ Oy → y = -2'},
+    {id:'p1q20',label:'Câu 20',question:'Cho hai đường thẳng $\\Delta_1$ và $\\Delta_2$ có vectơ pháp tuyến lần lượt $\\vec{n}_1, \\vec{n}_2$. Nếu $\\cos(\\vec{n}_1, \\vec{n}_2) = -\\frac{1}{2}$ thì',options:['$(\\Delta_1, \\Delta_2) = 30^\\circ$','$(\\Delta_1, \\Delta_2) = 45^\\circ$','$(\\Delta_1, \\Delta_2) = 60^\\circ$','$(\\Delta_1, \\Delta_2) = 120^\\circ$'],correct:2,explanation:'Góc giữa 2 đường = min(120°,60°) = 60°'},
+    {id:'p1q21',label:'Câu 21',question:'Đường thẳng $\\Delta$ là tiếp tuyến của đường tròn $(C)$ có tâm I, bán kính R khi và chỉ khi',options:['$d(I, \\Delta) > R$','$d(I, \\Delta) = R$','$d(I, \\Delta) < R$','$d(I, \\Delta) = 0$'],correct:1,explanation:'Điều kiện tiếp xúc: d = R'},
+    {id:'p1q22',label:'Câu 22',question:'Công thức tính khoảng cách từ điểm $M(x_0; y_0)$ đến đường thẳng $\\Delta: ax + by + c = 0$ là',options:['$d(M, \\Delta) = \\frac{|ax_0 + by_0 + c|}{\\sqrt{a^2 + b^2}}$','$d(M, \\Delta) = \\frac{ax_0 + by_0 + c}{\\sqrt{a^2 + b^2}}$','$d(M, \\Delta) = \\frac{|ax_0 + by_0 + c|}{a^2 + b^2}$','$d(M, \\Delta) = |ax_0 + by_0 + c|$'],correct:0,explanation:'Công thức khoảng cách chuẩn'},
+    {id:'p1q23',label:'Câu 23',question:'Cho hai đường thẳng $\\Delta_1$ và $\\Delta_2$ có vectơ chỉ phương $\\vec{u}_1 = (a_1; b_1)$, $\\vec{u}_2 = (a_2; b_2)$. Nếu $a_1 a_2 + b_1 b_2 = 0$ thì',options:['$\\Delta_1 \\perp \\Delta_2$','$\\Delta_1 \\parallel \\Delta_2$','$\\Delta_1 \\equiv \\Delta_2$','$\\Delta_1$ cắt $\\Delta_2$'],correct:0,explanation:'Tích vô hướng VTCP = 0 → vuông góc'},
+    {id:'p1q24',label:'Câu 24',question:'Xác định tâm I và bán kính R của đường tròn $(C): (x - 1)^2 + (y + 2)^2 = 4$',options:['$I(1; -2), R = 2$','$I(-1; 2), R = 2$','$I(1; -2), R = 4$','$I(-1; 2), R = 4$'],correct:0,explanation:'Tâm (1;-2), bán kính √4=2'},
+    {id:'p1q25',label:'Câu 25',question:'Tâm của đường tròn $x^2 + y^2 - 4x + 2y - 4 = 0$ là',options:['$I(-4; 2)$','$I(2; -1)$','$I(-2; 1)$','$I(4; -2)$'],correct:1,explanation:'(x-2)²+(y+1)²=9 → I(2;-1)'},
+    {id:'p1q26',label:'Câu 26',question:'Đường tròn $(C): x^2 + y^2 + 2x - 3 = 0$ có bán kính là',options:['$R = 1$','$R = 2$','$R = 3$','$R = 4$'],correct:1,explanation:'(x+1)²+y²=4 → R=2'},
+    {id:'p1q27',label:'Câu 27',question:'Trong các điểm sau, điểm nào là đỉnh của Elip $(E): \\frac{x^2}{16} + \\frac{y^2}{4} = 1$?',options:['$M(2; 0)$','$N(-4; 0)$','$P(2\\sqrt{3}; 0)$','$N(-4; 2)$'],correct:1,explanation:'a=4 → đỉnh (±4;0)'},
+    {id:'p1q28',label:'Câu 28',question:'Đường Elip $(E): \\frac{x^2}{25} + \\frac{y^2}{16} = 1$ có tiêu cự bằng:',options:['3','9','18','6'],correct:3,explanation:'c²=9 → c=3 → tiêu cự=6'},
+    {id:'p1q29',label:'Câu 29',question:'Đường Hyperbol $(H): \\frac{x^2}{16} - \\frac{y^2}{9} = 1$ có một tiêu điểm là',options:['$(7; 0)$','$(0; \\sqrt{7})$','$(0; 5)$','$(5; 0)$'],correct:3,explanation:'c²=25 → c=5 → F(±5;0)'},
+    {id:'p1q30',label:'Câu 30',question:'Phương trình đường chuẩn của parabol $(P): y^2 = 4x$ là',options:['$x - 1 = 0$','$x + 2 = 0$','$x + 1 = 0$','$x - 2 = 0$'],correct:2,explanation:'p=2 → đường chuẩn x=-1'}
+  ],
+  ds: [
+    {id:'p2q1',label:'Câu 1',type:'truefalse',question:'Trong mặt phẳng tọa độ Oxy, cho 3 điểm $A(-2; 1), B(0; 5), C(5; 3)$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) Tọa độ của vectơ $\\overrightarrow{AC}$ là $(3; 2)$.',correct:false,explanation:'$\\overrightarrow{AC} = (7; 2)$'},
+      {key:'b',text:'b) Tọa độ của điểm D sao cho tứ giác ABCD là hình bình hành là $(1; -2)$.',correct:false,explanation:'$D = A + C - B = (3; -1)$'},
+      {key:'c',text:'c) Tọa độ của vectơ $\\overrightarrow{OA} - 2\\overrightarrow{BC}$ là $(-9; 4)$.',correct:false,explanation:'$\\overrightarrow{OA} - 2\\overrightarrow{BC} = (-12; 5)$'},
+      {key:'d',text:'d) Tọa độ của điểm I để A là trung điểm của đoạn thẳng BI là $(-4; -3)$.',correct:true,explanation:'$I = 2A - B = (-4; -3)$'}
+    ]},
+    {id:'p2q2',label:'Câu 2',type:'truefalse',question:'Trong mặt phẳng tọa độ Oxy, cho 3 điểm $M(0; -2), N(1; 3), P(2; 5)$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) Tọa độ của vectơ $\\overrightarrow{MN} + 3\\overrightarrow{ON}$ là $(-5; 7)$.',correct:false,explanation:'$\\overrightarrow{MN} + 3\\overrightarrow{ON} = (4; 14)$'},
+      {key:'b',text:'b) Tọa độ của điểm R đối xứng với điểm N qua trục Ox là $(1; -3)$.',correct:true,explanation:'Đối xứng qua Ox: (x; -y)'},
+      {key:'c',text:'c) Tọa độ của điểm Q sao cho P là trọng tâm của tam giác MNQ là $(3; 9)$.',correct:false,explanation:'$Q = 3P - M - N = (5; 14)$'},
+      {key:'d',text:'d) $\\overrightarrow{MN} \\cdot \\overrightarrow{NP} = 17$.',correct:false,explanation:'$\\overrightarrow{MN} \\cdot \\overrightarrow{NP} = 11$'}
+    ]},
+    {id:'p2q3',label:'Câu 3',type:'truefalse',question:'Trong mặt phẳng tọa độ Oxy, cho đường thẳng $\\Delta: 3x - 4y + 1 = 0$ và hai điểm $A(3; 2), B(-1; 4)$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) Đường thẳng d đi qua 2 điểm A, B có phương trình tham số là $\\begin{cases} x = 3 - 2t \\\\ y = 2 + t \\end{cases}$.',correct:true,explanation:'$\\overrightarrow{AB} = (-4; 2)$ song song với $(-2; 1)$'},
+      {key:'b',text:'b) Khoảng cách từ gốc tọa độ O đến đường thẳng $\\Delta$ bằng 5.',correct:false,explanation:'$d(O, \\Delta) = 1/5$'},
+      {key:'c',text:'c) $\\cos(\\Delta, Ox) = \\frac{4}{5}$.',correct:true,explanation:'VTCP $\\vec{u}=(4;3)$, $\\cos = 4/5$'},
+      {key:'d',text:'d) Tâm của đường tròn đường kính AB có tọa độ là $(-1; -3)$.',correct:false,explanation:'Trung điểm AB = (1;3)'}
+    ]},
+    {id:'p2q4',label:'Câu 4',type:'truefalse',question:'Trong mặt phẳng tọa độ Oxy, cho đường thẳng $l: \\begin{cases} x = 1 - 2t \\\\ y = -3 + t \\end{cases}$ và hai điểm $M(0; -3), N(2; 1)$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) Đường thẳng $\\Delta$ đi qua điểm M và vuông góc với l có phương trình tổng quát là $x - 3y - 9 = 0$.',correct:false,explanation:'PT đúng: $2x - y - 3 = 0$'},
+      {key:'b',text:'b) Khoảng cách từ điểm M đến đường thẳng l bằng $2\\sqrt{10}$.',correct:false,explanation:'$d(M, l) = 1/\\sqrt{5}$'},
+      {key:'c',text:'c) $\\cos(MN, Oy) = \\frac{2\\sqrt{5}}{5}$.',correct:true,explanation:'$\\overrightarrow{MN}=(2;4)$, $\\cos = \\frac{4}{2\\sqrt{5}} = \\frac{2\\sqrt{5}}{5}$'},
+      {key:'d',text:'d) Bán kính của đường tròn tâm M và đi qua điểm N bằng $2\\sqrt{5}$.',correct:true,explanation:'$MN = \\sqrt{4+16} = 2\\sqrt{5}$'}
+    ]},
+    {id:'p2q5',label:'Câu 5',type:'truefalse',question:'Trong mặt phẳng toạ độ Oxy, cho tam giác DEF có $D(1; -1), E(2; 1), F(3; 5)$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) Đường thẳng vuông góc với đường thẳng EF nhận $\\overrightarrow{EF}$ là một vec tơ chỉ phương.',correct:false,explanation:'Đường $\\perp$ EF nhận $\\overrightarrow{EF}$ làm VTPT'},
+      {key:'b',text:'b) Phương trình đường cao kẻ từ D là $x + y = 0$.',correct:false,explanation:'Đường cao từ D: $x + 4y + 3 = 0$'},
+      {key:'c',text:'c) Gọi I là trung điểm của DF. Toạ độ của điểm I là $(2; 2)$.',correct:true,explanation:'$I = ((1+3)/2; (-1+5)/2) = (2;2)$'},
+      {key:'d',text:'d) Đường trung tuyến kẻ từ E có phương trình là $x - 2 = 0$.',correct:true,explanation:'Qua E(2;1) và I(2;2) → x=2'}
+    ]},
+    {id:'p2q6',label:'Câu 6',type:'truefalse',question:'Cho hai đường thẳng $\\Delta_1: 2x + y + 15 = 0$ và $\\Delta_2: x - 2y - 3 = 0$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) $\\Delta_1$, $\\Delta_2$ lần lượt có vectơ pháp tuyến là $\\vec{n}_1 = (2; 1)$, $\\vec{n}_2 = (1; -2)$.',correct:true,explanation:'VTPT đọc từ hệ số'},
+      {key:'b',text:'b) Hai đường thẳng $\\Delta_1$, $\\Delta_2$ cắt nhau.',correct:true,explanation:'$\\vec{n}_1 \\cdot \\vec{n}_2 = 0$ nên cắt nhau (vuông góc)'},
+      {key:'c',text:'c) $\\Delta_1$, $\\Delta_2$ cắt nhau tại $\\left(-\\frac{27}{4}; -\\frac{21}{4}\\right)$.',correct:false,explanation:'Giao điểm: $(-27/5; -21/5)$'},
+      {key:'d',text:'d) $\\Delta_1$, $\\Delta_2$ vuông góc với nhau.',correct:true,explanation:'$\\vec{n}_1 \\cdot \\vec{n}_2 = 0$'}
+    ]},
+    {id:'p2q7',label:'Câu 7',type:'truefalse',question:'Cho hai đường thẳng $\\Delta_1: \\begin{cases} x = 3 - t \\\\ y = -2 + t \\end{cases}$ và $\\Delta_2: \\frac{x-1}{2} = \\frac{y-1}{-3}$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) $\\Delta_1$, $\\Delta_2$ lần lượt có vectơ chỉ phương là $\\vec{u}_1 = (1; -1)$, $\\vec{u}_2 = (2; -3)$.',correct:true,explanation:'VTCP $\\Delta_1$: (-1;1) cùng phương (1;-1); $\\Delta_2$: (2;-3)'},
+      {key:'b',text:'b) $\\cos(\\Delta_1, \\Delta_2) = \\frac{\\sqrt{26}}{26}$.',correct:false,explanation:'$\\cos = \\frac{5\\sqrt{26}}{26}$'},
+      {key:'c',text:'c) Hai đường thẳng $\\Delta_1$, $\\Delta_2$ song song.',correct:false,explanation:'VTCP không tỉ lệ: (1;-1) ≠ k(2;-3)'},
+      {key:'d',text:'d) $\\Delta_1$, $\\Delta_2$ cắt nhau tại điểm có tọa độ $\\left(\\frac{7}{3}; \\frac{2}{3}\\right)$.',correct:false,explanation:'Giao điểm: (3; -2)'}
+    ]},
+    {id:'p2q8',label:'Câu 8',type:'truefalse',question:'Cho đường tròn $(C): x^2 + y^2 - 6x + 2y + 6 = 0$ và hai điểm $A(1; -1), B(1; 3)$. Các mệnh đề sau đúng hay sai?',subItems:[
+      {key:'a',text:'a) Điểm A thuộc đường tròn.',correct:true,explanation:'$IA = 2 = R$'},
+      {key:'b',text:'b) Điểm B nằm trong đường tròn.',correct:false,explanation:'$IB = 2\\sqrt{5} > 2 = R$'},
+      {key:'c',text:'c) $x = 1$ là phương trình tiếp tuyến của $(C)$ tại điểm A.',correct:true,explanation:'Tiếp tuyến tại A: $IA = (-2;0)$ → VTPT (1;0) → x=1'},
+      {key:'d',text:'d) Qua B kẻ được hai tiếp tuyến với $(C)$ có phương trình là: $x = 1; 3x + 4y - 12 = 0$.',correct:false,explanation:'$3x+4y-12=0$ có $d(I,\\Delta)=7/5 \\neq 2$'}
+    ]}
+  ],
+  sn: [
+    {id:'p3q1',label:'Câu 1',type:'shortanswer',question:'Một lớp học có 20 bạn nam và 25 bạn nữ. Chọn ngẫu nhiên hai bạn trong lớp. Tính xác suất để hai bạn được chọn chỉ có nam hoặc nữ. (kết quả làm tròn đến hàng phần mười)',correct:'0,5',unit:'',explanation:'P = [C(20,2)+C(25,2)]/C(45,2) = 490/990 ≈ 0,5',acceptRange:[0.45,0.55]},
+    {id:'p3q2',label:'Câu 2',type:'shortanswer',question:'Thùng I chứa các quả bóng được đánh số từ 1 đến 5. Thùng II chứa các quả bóng cũng được đánh số từ 1 đến 5. Lấy ra ngẫu nhiên một quả bóng ở mỗi thùng. Tính xác suất để quả bóng lấy ra ở thùng I được đánh số là số nguyên tố và quả bóng lấy ra ở thùng II được đánh số là một số chẵn.',correct:'6/25',unit:'',explanation:'P = (3/5)·(2/5) = 6/25 = 0,24',acceptRange:[0.23,0.25]},
+    {id:'p3q3',label:'Câu 3',type:'shortanswer',question:'Trong mặt phẳng tọa độ Oxy, cho hai điểm $A(x; -2), B(1; 3)$. Tìm hoành độ x của điểm A biết rằng $\\overrightarrow{OA} \\cdot \\overrightarrow{OB} = -4$?',correct:'2',unit:'',explanation:'x·1 + (-2)·3 = -4 → x = 2'},
+    {id:'p3q4',label:'Câu 4',type:'shortanswer',question:'Trong mặt phẳng tọa độ, cho $M(-3; 4), N(1; 2)$. Tìm giá trị $b (b > 1)$ là tung độ của điểm $P \\in Oy$ sao cho tam giác MNP vuông tại P.',correct:'5',unit:'',explanation:'MP·NP=0 → b²-6b+5=0 → b=5 (b>1)'},
+    {id:'p3q5',label:'Câu 5',type:'shortanswer',question:'Trong mặt phẳng toạ độ Oxy, cho tam giác ABC biết đỉnh $C(-10; 4)$, độ dài $AB = 5$ và phương trình tham số của cạnh $AB: \\begin{cases} x = -1 + 4t \\\\ y = 1 + 3t \\end{cases}$. Hãy tính diện tích S của tam giác ABC.',correct:'19,5',unit:'',explanation:'d(C,AB)=39/5=7,8 → S=½·5·7,8=19,5'},
+    {id:'p3q6',label:'Câu 6',type:'shortanswer',question:'Trong mặt phẳng toạ độ Oxy, cho điểm $I(-2; 4)$. Tính bán kính của đường tròn tâm I tiếp xúc với đường thẳng $\\Delta: \\begin{cases} x = 2 + 3t \\\\ y = -2 - 2t \\end{cases}$. (làm tròn kết quả đến hàng phần mười).',correct:'2,8',unit:'',explanation:'R = d(I,Δ) = 10/√13 ≈ 2,8',acceptRange:[2.75,2.85]},
+    {id:'p3q7',label:'Câu 7',type:'shortanswer',question:'Cho elip $(E): \\frac{x^2}{9} + \\frac{y^2}{4} = 1$. Tính giá trị của biểu thức $H = a^2 - b^2 + c$.',correct:'5+√5',unit:'',explanation:'a²=9, b²=4, c=√5 → H=5+√5',acceptRange:[7.2,7.3]},
+    {id:'p3q8',label:'Câu 8',type:'shortanswer',question:'Cho hyperbol $(H): \\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1$. Biết (H) đi qua điểm $A(4; 0)$ và có một tiêu điểm là $F_1(-6; 0)$. Tính giá trị của biểu thức $T = \\frac{a + b}{c}$.',correct:'(2+√5)/3',unit:'',explanation:'a=4, c=6, b²=c²-a²=20 → T=(4+2√5)/6=(2+√5)/3'},
+    {id:'p3q9',label:'Câu 9',type:'shortanswer',question:'Trong mặt phẳng tọa độ, cho đường thẳng $\\Delta: \\begin{cases} x = 1 + t \\\\ y = 2 + t \\end{cases}$. Giả sử $N(x; y) \\in \\Delta$ là điểm có khoảng cách nhỏ nhất đến gốc tọa độ O. Hãy tính giá trị của biểu thức $Q = 5x - 5y$.',correct:'-5',unit:'',explanation:'N = (-1/2; 1/2) → Q = 5(-1/2)-5(1/2) = -5'},
+    {id:'p3q10',label:'Câu 10',type:'shortanswer',question:'Chọn ngẫu nhiên 2 số trong tập hợp $X = \\{1; 2; 3; \\ldots; 50\\}$. Tính xác suất của biến cố A: "Hai số được chọn là số chẵn". (kết quả làm tròn đến hàng phần trăm)',correct:'0,24',unit:'',explanation:'P = C(25,2)/C(50,2) = 12/49 ≈ 0,24',acceptRange:[0.23,0.25]}
+  ]
+};
+
+
+// ── PASSAGES (for images) ──
+const PASSAGES = {};
+
+const LABELS = ['A','B','C','D'];
+let selectedMode = 'all';
+let questions = [];
+let qIdx = 0;
+let answers = [];
+let tfAnswers = {};
+let tfCompleted = {};
+
+function buildQuestions(mode) {
+  if (mode === 'all') return [...questionsData.tnmc, ...questionsData.ds, ...questionsData.sn];
+  if (mode === 'tnmc') return [...questionsData.tnmc];
+  if (mode === 'ds') return [...questionsData.ds];
+  if (mode === 'sn') return [...questionsData.sn];
+  return [];
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const allQ = buildQuestions('all');
+  document.getElementById('total-q-badge').textContent = allQ.length;
+  document.getElementById('cnt-all').textContent = allQ.length + ' câu';
+  document.getElementById('cnt-tnmc').textContent = questionsData.tnmc.length + ' câu';
+  document.getElementById('cnt-ds').textContent = questionsData.ds.length + ' câu';
+  document.getElementById('cnt-sn').textContent = questionsData.sn.length + ' câu';
+
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedMode = card.dataset.mode;
+    });
+  });
+
+  document.getElementById('btn-start').addEventListener('click', startQuiz);
+  document.getElementById('btn-next').addEventListener('click', nextQuestion);
+
+  document.addEventListener('mousemove', e => {
+    const g = document.getElementById('glow');
+    g.style.left = e.clientX + 'px';
+    g.style.top = e.clientY + 'px';
+  });
+});
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  questions = buildQuestions(selectedMode);
+  qIdx = 0; answers = []; tfAnswers = {}; tfCompleted = {};
+  showScreen('quiz-screen');
+  const modeNames = { all:'Tổng hợp', tnmc:'Phần I – Trắc nghiệm', ds:'Phần II – Đúng/Sai', sn:'Phần III – Trả lời ngắn' };
+  document.getElementById('cur-mode-badge').textContent = modeNames[selectedMode] || selectedMode;
+  document.getElementById('q-total').textContent = questions.length;
+  buildSegProgress();
+  renderQuestion();
+}
+
+function buildSegProgress() {
+  const el = document.getElementById('seg-progress');
+  el.innerHTML = '';
+  const total = questions.length;
+  const maxW = Math.max(3, Math.min(14, Math.floor(860 / total) - 3));
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'seg-dot' + (i === 0 ? ' current' : '');
+    d.id = 'seg-' + i;
+    d.style.maxWidth = maxW + 'px';
+    el.appendChild(d);
+  });
+}
+
+function updateSegProgress(idx, result) {
+  const d = document.getElementById('seg-' + idx);
+  if (d) {
+    d.classList.remove('current');
+    d.classList.add(result ? 'correct' : 'wrong');
+  }
+  const next = document.getElementById('seg-' + (idx + 1));
+  if (next) {
+    next.classList.add('current');
+  }
+}
+
+function renderQuestion() {
+  const q = questions[qIdx];
+  const total = questions.length;
+  document.getElementById('q-cur').textContent = qIdx + 1;
+  document.getElementById('progress-bar').style.width = ((qIdx / total) * 100) + '%';
+  document.getElementById('feedback-box').className = 'feedback-box';
+  document.getElementById('feedback-box').innerHTML = '';
+  document.getElementById('btn-next').className = 'btn-next';
+
+  const layout = document.getElementById('quiz-layout');
+  const passagePanel = document.getElementById('passage-panel');
+  const passageText = document.getElementById('passage-text');
+
+  passagePanel.style.display = 'none';
+  layout.classList.add('no-passage');
+
+  document.getElementById('q-label').textContent = q.label;
+  // Use innerHTML to allow KaTeX rendering in question text
+  document.getElementById('q-text').innerHTML = q.question;
+
+  const content = document.getElementById('q-content');
+  content.innerHTML = '';
+
+  if (q.type === 'truefalse') {
+    renderTrueFalseQuestion(q, content);
+  } else if (q.type === 'shortanswer') {
+    renderShortAnswerQuestion(q, content);
+  } else {
+    renderMCQuestion(q, content);
+  }
+
+  // Trigger KaTeX rendering on new content
+  if (window.renderMathInElement) {
+    renderMathInElement(document.getElementById('quiz-layout'), {
+      delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError: false
+    });
+  }
+}
+
+function renderMCQuestion(q, content) {
+  const div = document.createElement('div');
+  div.className = 'options';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-label">${LABELS[i]}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => selectMCAnswer(q, i));
+    div.appendChild(btn);
+  });
+  content.appendChild(div);
+}
+
+function selectMCAnswer(q, chosen) {
+  const isCorrect = chosen === q.correct;
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, i) => {
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === chosen && !isCorrect) btn.classList.add('wrong');
+    else btn.classList.add('disabled-plain');
+  });
+  answers.push({ correct: isCorrect, given: LABELS[chosen], correctAnswer: LABELS[q.correct], question: q.question, explanation: q.explanation || '' });
+  updateSegProgress(qIdx, isCorrect);
+  const fb = document.getElementById('feedback-box');
+  if (isCorrect) {
+    fb.className = 'feedback-box correct-fb show';
+    fb.innerHTML = `<span>✅</span><div><b>Chính xác!</b><div class="feedback-explanation">💡 ${q.explanation || ''}</div></div>`;
+  } else {
+    fb.className = 'feedback-box wrong-fb show';
+    fb.innerHTML = `<span>❌</span><div><b>Sai rồi!</b> Đáp án đúng: <b>${LABELS[q.correct]}. ${q.options[q.correct]}</b><div class="feedback-explanation">💡 ${q.explanation || ''}</div></div>`;
+  }
+  document.getElementById('btn-next').className = 'btn-next show';
+  if (window.renderMathInElement) {
+    renderMathInElement(document.getElementById('feedback-box'), {
+      delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError: false
+    });
+  }
+}
+
+function renderTrueFalseQuestion(q, content) {
+  if (!tfAnswers[q.id]) tfAnswers[q.id] = {};
+  if (!tfCompleted[q.id]) tfCompleted[q.id] = {};
+  q.subItems.forEach(sub => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tf-sub-item';
+    wrap.innerHTML = `<div class="tf-sub-label"><span>${sub.key.toUpperCase()})</span> ${sub.text.substring(3)}</div>`;
+    const btnsDiv = document.createElement('div');
+    btnsDiv.className = 'tf-options';
+    const trueBtn = document.createElement('button');
+    trueBtn.className = 'tf-btn'; trueBtn.textContent = '✓ Đúng';
+    const falseBtn = document.createElement('button');
+    falseBtn.className = 'tf-btn'; falseBtn.textContent = '✗ Sai';
+    const fbDiv = document.createElement('div');
+    fbDiv.className = 'wc-feedback';
+    trueBtn.addEventListener('click', () => handleTF(q, sub, true, trueBtn, falseBtn, fbDiv));
+    falseBtn.addEventListener('click', () => handleTF(q, sub, false, trueBtn, falseBtn, fbDiv));
+    btnsDiv.appendChild(trueBtn); btnsDiv.appendChild(falseBtn);
+    wrap.appendChild(btnsDiv); wrap.appendChild(fbDiv);
+    content.appendChild(wrap);
+  });
+}
+
+function handleTF(q, sub, chosen, trueBtn, falseBtn, fbDiv) {
+  if (tfCompleted[q.id][sub.key]) return;
+  tfCompleted[q.id][sub.key] = true;
+  tfAnswers[q.id][sub.key] = chosen;
+  const isCorrect = chosen === sub.correct;
+  trueBtn.disabled = true; falseBtn.disabled = true;
+  if (sub.correct === true) { trueBtn.className = 'tf-btn correct'; } else { falseBtn.className = 'tf-btn correct'; }
+  if (!isCorrect) { (chosen ? trueBtn : falseBtn).className = 'tf-btn wrong'; }
+  fbDiv.innerHTML = `${isCorrect ? '✅' : '❌'} <b>${isCorrect ? 'Chính xác!' : 'Chưa đúng.'}</b> ${sub.explanation}`;
+  fbDiv.className = 'wc-feedback show ' + (isCorrect ? 'wf-correct' : 'wf-wrong');
+  if (window.renderMathInElement) {
+    renderMathInElement(fbDiv, { delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}], throwOnError:false });
+  }
+  const allAnswered = q.subItems.every(s => tfCompleted[q.id][s.key]);
+  if (allAnswered) {
+    const correctCount = q.subItems.filter(s => tfAnswers[q.id][s.key] === s.correct).length;
+    const total = q.subItems.length;
+    const allRight = correctCount === total;
+    answers.push({ correct: allRight, given: `${correctCount}/${total} đúng`, correctAnswer: `${total}/${total}`, question: q.question, explanation: `Bạn trả lời đúng ${correctCount}/${total} ý.` });
+    updateSegProgress(qIdx, allRight);
+    const fb = document.getElementById('feedback-box');
+    fb.className = 'feedback-box ' + (allRight ? 'correct-fb' : 'wrong-fb') + ' show';
+    fb.innerHTML = `<span>${allRight ? '🏆' : '📝'}</span><div><b>${allRight ? 'Xuất sắc! Tất cả đều đúng!' : `Hoàn thành! Đúng ${correctCount}/${total} ý.`}</b></div>`;
+    document.getElementById('btn-next').className = 'btn-next show';
+  }
+}
+
+function renderShortAnswerQuestion(q, content) {
+  const wrap = document.createElement('div');
+  wrap.className = 'sa-wrap';
+
+  const row = document.createElement('div');
+  row.className = 'sa-input-row';
+
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.className = 'sa-input';
+  inp.placeholder = 'Nhập đáp số...';
+  inp.autocomplete = 'off';
+  row.appendChild(inp);
+
+  if (q.unit) {
+    const unitSpan = document.createElement('span');
+    unitSpan.className = 'sa-unit';
+    unitSpan.textContent = q.unit;
+    row.appendChild(unitSpan);
+  }
+  wrap.appendChild(row);
+
+  const hint = document.createElement('div');
+  hint.className = 'sa-hint';
+  hint.textContent = '💡 Nhập số, nhấn Enter hoặc bấm Kiểm tra';
+  wrap.appendChild(hint);
+
+  const checkBtn = document.createElement('button');
+  checkBtn.className = 'btn-check-sa';
+  checkBtn.textContent = '✓ Kiểm tra đáp án';
+  wrap.appendChild(checkBtn);
+
+  content.appendChild(wrap);
+
+  function submit() {
+    const userVal = inp.value.trim();
+    if (!userVal) return;
+    inp.disabled = true;
+    checkBtn.disabled = true;
+    checkBtn.style.opacity = '0.5';
+
+    // Check correctness
+    const userNum = parseFloat(userVal.replace(',', '.'));
+    let isCorrect = false;
+    if (!isNaN(userNum) && q.acceptRange) {
+      isCorrect = userNum >= q.acceptRange[0] && userNum <= q.acceptRange[1];
+    } else {
+      isCorrect = userVal.replace(',','.') === String(q.correct).replace(',','.');
+    }
+
+    inp.classList.add(isCorrect ? 'sa-correct' : 'sa-wrong');
+
+    if (!isCorrect) {
+      const showAns = document.createElement('div');
+      showAns.className = 'sa-correct-show';
+      showAns.innerHTML = `✅ Đáp án đúng: <b>${q.correct} ${q.unit || ''}</b>`;
+      wrap.appendChild(showAns);
+    }
+
+    answers.push({ correct: isCorrect, given: userVal, correctAnswer: `${q.correct} ${q.unit||''}`, question: q.question, explanation: q.explanation || '' });
+    updateSegProgress(qIdx, isCorrect);
+
+    const fb = document.getElementById('feedback-box');
+    if (isCorrect) {
+      fb.className = 'feedback-box correct-fb show';
+      fb.innerHTML = `<span>✅</span><div><b>Chính xác!</b><div class="feedback-explanation">💡 ${q.explanation || ''}</div></div>`;
+    } else {
+      fb.className = 'feedback-box wrong-fb show';
+      fb.innerHTML = `<span>❌</span><div><b>Sai rồi!</b> Đáp án: <b>${q.correct} ${q.unit||''}</b><div class="feedback-explanation">💡 ${q.explanation || ''}</div></div>`;
+    }
+    document.getElementById('btn-next').className = 'btn-next show';
+    if (window.renderMathInElement) {
+      renderMathInElement(document.getElementById('feedback-box'), {
+        delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+        throwOnError: false
+      });
+    }
+  }
+
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  checkBtn.addEventListener('click', submit);
+}
+
+function nextQuestion() {
+  qIdx++;
+  if (qIdx >= questions.length) showResult(); else renderQuestion();
+}
+
+function showResult() {
+  showScreen('result-screen');
+  const correct = answers.filter(a => a.correct).length;
+  const total = answers.length;
+  const pct = Math.round((correct / total) * 100);
+  document.getElementById('rs-correct').textContent = correct;
+  document.getElementById('rs-wrong').textContent = total - correct;
+  document.getElementById('rs-total').textContent = total;
+  document.getElementById('ring-pct').textContent = pct + '%';
+  const circumference = 2 * Math.PI * 65;
+  const ring = document.getElementById('ring-fill');
+  ring.style.strokeDasharray = circumference;
+  ring.style.strokeDashoffset = circumference;
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circumference * (1 - pct / 100);
+    ring.style.stroke = pct >= 80 ? '#3fb950' : pct >= 60 ? '#f0883e' : '#f85149';
+  }, 100);
+  document.getElementById('ring-pct').style.color = pct >= 80 ? '#3fb950' : pct >= 60 ? '#f0883e' : '#f85149';
+  const titles = pct === 100 ? ['🏆 Hoàn hảo!', 'Bạn đã trả lời đúng tất cả các câu!']
+    : pct >= 80 ? ['🎉 Xuất sắc!', `Kết quả rất tốt: ${correct}/${total} câu đúng.`]
+    : pct >= 60 ? ['👍 Khá tốt!', `Cần ôn thêm: ${correct}/${total} câu đúng.`]
+    : ['📚 Cần cố gắng thêm!', `Hãy xem lại bài: ${correct}/${total} câu đúng.`];
+  document.getElementById('result-title').textContent = titles[0];
+  document.getElementById('result-sub').textContent = titles[1];
+  const reviewList = document.getElementById('review-list');
+  reviewList.innerHTML = '';
+  const wrongOnes = answers.filter(a => !a.correct);
+  if (wrongOnes.length === 0) {
+    reviewList.innerHTML = '<p style="color:var(--green);font-weight:600;">🎊 Không có câu nào sai!</p>';
+  } else {
+    wrongOnes.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      div.innerHTML = `<div class="ri-q">${a.question}</div>
+        <div class="ri-row ri-wrong-ans">✗ Bạn chọn: ${a.given}</div>
+        <div class="ri-row ri-right-ans">✓ Đáp án đúng: ${a.correctAnswer}</div>
+        ${a.explanation ? `<div class="ri-row" style="color:var(--muted);font-size:0.78rem;">💡 ${a.explanation}</div>` : ''}`;
+      reviewList.appendChild(div);
+    });
+  }
+}
+</script>
+</body>
+</html>
